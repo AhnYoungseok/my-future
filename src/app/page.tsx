@@ -11,7 +11,23 @@ const homeCards = [
   ["미래차·배터리", "기계공학, 전기전자, 배터리, 화학공학. 전기차, 에너지, 모빌리티 산업을 함께 봅니다.", "/majors?category=미래차·배터리", "blue"]
 ] as const;
 
+const representativeMajorIds = [
+  "medicine",
+  "semiconductor",
+  "computer-science",
+  "biotech",
+  "mechanical",
+  "data-science",
+  "electronics",
+  "biomedical",
+  "chemical"
+];
+
 export default function HomePage() {
+  const representativeMajors = representativeMajorIds
+    .map((id) => majors.find((major) => major.id === id))
+    .filter((major): major is (typeof majors)[number] => Boolean(major));
+
   return (
     <main>
       <section className="bg-gradient-to-br from-white via-blue-50 to-slate-100">
@@ -43,9 +59,10 @@ export default function HomePage() {
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {homeCards.map(([title, desc, href, tone]) => <CategoryCard key={title} title={title} description={desc} href={href} tone={tone} />)}
         </div>
-        <h2 className="mt-12 text-3xl font-black text-navy">우선 탐색 학과</h2>
+        <h2 className="mt-12 text-3xl font-black text-navy">전체 전공계열 대표 학과</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">메디컬만 먼저 보이지 않도록 반도체, AI·소프트웨어, 바이오·제약, 미래차·배터리까지 대표 학과를 함께 배치했습니다.</p>
         <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {majors.slice(0, 6).map((major) => <MajorCard key={major.id} major={major} />)}
+          {representativeMajors.map((major) => <MajorCard key={major.id} major={major} />)}
         </div>
       </section>
     </main>

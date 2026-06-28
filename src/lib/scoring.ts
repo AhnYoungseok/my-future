@@ -2,12 +2,12 @@ import type { Job, Major, RecommendationScore, StudentProfile } from "@/types/ca
 
 export const defaultStudentProfile: StudentProfile = {
   interests: {
-    medical: 4,
+    medical: 3,
     semiconductor: 4,
-    ai: 3,
-    bio: 4,
-    helping: 4,
-    stability: 4,
+    ai: 4,
+    bio: 3,
+    helping: 3,
+    stability: 3,
     growth: 4,
     research: 3
   },
@@ -17,7 +17,7 @@ export const defaultStudentProfile: StudentProfile = {
     영어: 4,
     물리: 3,
     화학: 4,
-    생명과학: 4,
+    생명과학: 3,
     지구과학: 3,
     "정보/코딩": 3,
     "사회/경제": 3,
@@ -26,30 +26,30 @@ export const defaultStudentProfile: StudentProfile = {
   traits: {
     longStudy: 4,
     experimentRetry: 4,
-    peopleFacing: 4,
-    responsibility: 4,
-    changeTolerance: 3,
+    peopleFacing: 3,
+    responsibility: 3,
+    changeTolerance: 4,
     competition: 3,
-    predictability: 4,
+    predictability: 3,
     logic: 4
   },
   values: {
     salary: 4,
-    stability: 4,
-    prestige: 4,
-    contribution: 4,
+    stability: 3,
+    prestige: 3,
+    contribution: 3,
     workLife: 3,
     growth: 4,
     startup: 2,
-    expertise: 5,
+    expertise: 4,
     global: 3,
     family: 3
   },
   lifestyle: {
     nightWeekend: 3,
-    longTraining: 4,
+    longTraining: 3,
     corporatePressure: 3,
-    safetyResponsibility: 4,
+    safetyResponsibility: 3,
     regionalMove: 3,
     specialEnvironment: 4
   }
@@ -156,4 +156,12 @@ export function getTopRecommendedMajors(profile: StudentProfile, majors: Major[]
 
 export function getTopRecommendedJobs(profile: StudentProfile, jobs: Job[]) {
   return jobs.map((job) => calculateJobFit(profile, job)).sort((a, b) => b.fitScore - a.fitScore);
+}
+
+export function getCategoryRepresentativeMajors(profile: StudentProfile, majors: Major[]) {
+  const scored = getTopRecommendedMajors(profile, majors);
+  const representatives = Array.from(new Set(majors.map((major) => major.category)))
+    .map((category) => scored.find((item) => majors.find((major) => major.id === item.id)?.category === category))
+    .filter((item): item is RecommendationScore => Boolean(item));
+  return representatives.sort((a, b) => b.fitScore - a.fitScore);
 }

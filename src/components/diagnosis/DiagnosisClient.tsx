@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { jobs, majors } from "@/data/mockData";
-import { defaultStudentProfile, getTopRecommendedJobs, getTopRecommendedMajors } from "@/lib/scoring";
+import { defaultStudentProfile, getCategoryRepresentativeMajors, getTopRecommendedJobs, getTopRecommendedMajors } from "@/lib/scoring";
 import type { StudentProfile } from "@/types/career";
 import { savePortfolio } from "@/lib/storage";
 import { ScoreBar } from "@/components/ui/ScoreBar";
@@ -76,6 +76,7 @@ export function DiagnosisClient() {
   const [profile, setProfile] = useState<StudentProfile>(defaultStudentProfile);
   const [step, setStep] = useState(0);
   const majorResults = useMemo(() => getTopRecommendedMajors(profile, majors), [profile]);
+  const categoryMajorResults = useMemo(() => getCategoryRepresentativeMajors(profile, majors), [profile]);
   const jobResults = useMemo(() => getTopRecommendedJobs(profile, jobs), [profile]);
 
   function update(group: keyof StudentProfile, key: string, value: number) {
@@ -113,8 +114,12 @@ export function DiagnosisClient() {
         <h2 className="text-2xl font-black text-navy">진단 결과</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">추천은 단정이 아니라 탐색 우선순위입니다. 입시 가능성, 공식 모집요강, 실제 직무 생활을 함께 확인하세요.</p>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
-          <ResultList title="추천 학과 TOP 5" items={majorResults.slice(0, 5)} hrefPrefix="/majors" />
+          <ResultList title="전체 계열별 추천 학과" items={categoryMajorResults} hrefPrefix="/majors" />
           <ResultList title="추천 직업 TOP 5" items={jobResults.slice(0, 5)} hrefPrefix="/jobs" />
+        </div>
+        <div className="mt-5 rounded-md border border-blue-100 bg-blue-50 p-4">
+          <h3 className="font-black text-navy">개인 점수 기준 TOP 5</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{majorResults.slice(0, 5).map((item) => `${item.name} ${item.fitScore}`).join(" · ")}</p>
         </div>
         <div className="mt-5 rounded-md bg-slate-50 p-4">
           <h3 className="font-black text-navy">주의해야 할 학과 TOP 3</h3>
@@ -128,7 +133,7 @@ export function DiagnosisClient() {
           className="mt-5 rounded-md bg-slateblue px-4 py-2 font-bold text-white"
           onClick={() => {
             savePortfolio({
-              majors: majorResults.slice(0, 5).map((item) => item.id),
+              majors: categoryMajorResults.map((item) => item.id),
               jobs: jobResults.slice(0, 5).map((item) => item.id),
               companies: [],
               diagnosis: profile

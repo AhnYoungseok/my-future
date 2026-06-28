@@ -1,4 +1,5 @@
 import type {
+  AdmissionProfile,
   Category,
   Company,
   ComparisonPreset,
@@ -63,6 +64,63 @@ const life = (
   burnoutRisk,
   description
 });
+
+const admission = (id: string, name: string, category: Category, subjects: string[]): AdmissionProfile => {
+  const topMedical = ["medicine", "dentistry", "pharmacy", "veterinary"];
+  const semiCore = ["semiconductor", "electronics", "ai", "computer-science"];
+  const level = topMedical.includes(id)
+    ? "최상위권"
+    : category === "메디컬" || semiCore.includes(id)
+      ? "상위권"
+      : ["biotech", "biomedical", "chemical", "materials", "data-science"].includes(id)
+        ? "중상위권"
+        : "변동 큼";
+  const schoolRecordRange =
+    level === "최상위권"
+      ? "학생부교과 기준 매우 높은 내신 경쟁. 대학·전형별로 1등급대 초반 수준까지 확인 필요"
+      : level === "상위권"
+        ? "상위권 내신 경쟁. 수도권·상위권 대학은 1~2등급대 중심으로 확인 필요"
+        : level === "중상위권"
+          ? "중상위권 이상에서 대학·지역·전형별 차이가 큼. 2~3등급대 사례까지 폭넓게 확인 필요"
+          : "전형, 대학, 지역, 모집단위에 따라 성적대 변동 폭이 큼";
+  const csatRange =
+    level === "최상위권"
+      ? "정시 기준 국수영탐 전 영역 최상위 백분위와 탐구 과목 선택 영향 확인 필요"
+      : level === "상위권"
+        ? "정시 기준 수학·탐구 강세가 중요하며 대학별 반영비율 확인 필요"
+        : level === "중상위권"
+          ? "수학·탐구 반영비율, 가산점, 영어 등급 영향에 따라 유불리 변화"
+          : "수능최저, 지역인재, 학생부종합 등 전형 구조별 유불리 확인 필요";
+
+  return {
+    competitivenessLevel: level,
+    schoolRecordRange,
+    csatRange,
+    keySubjects: subjects,
+    recommendedPreparation: [
+      `${subjects.join("·")} 과목의 등급과 세특 연결을 우선 점검`,
+      "학생부교과, 학생부종합, 정시, 지역인재 전형을 분리해서 비교",
+      "전년도 입시결과보다 최근 모집요강의 반영비율과 수능최저를 먼저 확인"
+    ],
+    alternativePaths:
+      category === "메디컬"
+        ? ["약학과", "간호학과", "의생명공학과", "생명공학과"]
+        : category === "반도체"
+          ? ["전자공학과", "신소재공학과", "화학공학과", "전기공학과"]
+          : ["관련 융합학과", "지역 국립대 유사 학과", "전공 연계 복수전공"],
+    checkPoints: [
+      "전년도 입결은 참고값이며 모집인원·전형 변화에 따라 크게 달라질 수 있음",
+      "내신 등급만 보지 말고 수능최저, 면접, 세특, 탐구활동, 지역인재 여부를 함께 확인",
+      "최종 지원 전 각 대학 입학처 모집요강과 대입정보포털 어디가 성적분석으로 재확인"
+    ],
+    officialCheckLinks: {
+      adiga: "https://www.adiga.kr/",
+      universityAdmissions: createGoogleSearchUrl(`${name} 입학처 모집요강 입시결과`),
+      academyInfo: "https://www.academyinfo.go.kr/"
+    },
+    note: "성적 수준은 mock data 기반의 탐색용 범위입니다. 실제 합격 가능성은 대학, 전형, 모집인원, 지역인재, 수능최저, 면접, 학생부 평가 방식에 따라 매년 달라집니다."
+  };
+};
 
 const risks = (category: Category, high: string[] = []): RiskItem[] => {
   const common: RiskItem[] = [
@@ -161,6 +219,7 @@ export const majors: Major[] = majorSeeds.map(([id, name, category, summary, key
   relatedUniversityMajors: [],
   relatedJobs: [],
   relatedCompanies: [],
+  admissionProfile: admission(id, name, category, subjects),
   salaryProfile,
   lifestyleProfile,
   pros: commonPros,

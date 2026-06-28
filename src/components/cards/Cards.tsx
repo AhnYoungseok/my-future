@@ -18,11 +18,12 @@ export function MajorCard({ major }: { major: Major }) {
     <Link href={`/majors/${major.id}`} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slateblue hover:shadow-soft">
       <div className="mb-3 flex items-center justify-between gap-3">
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slateblue">{major.category}</span>
-        <span className="text-xs font-semibold text-slate-500">{major.salaryProfile.salaryLevel}</span>
+        <span className="text-xs font-semibold text-slate-500">{major.admissionProfile.competitivenessLevel}</span>
       </div>
       <h3 className="text-xl font-black text-navy">{major.name}</h3>
       <p className="mt-2 min-h-12 text-sm leading-6 text-slate-600">{major.summary}</p>
       <div className="mt-4 flex flex-wrap gap-2">{major.highSchoolRecommendedSubjects.slice(0, 3).map((s) => <span key={s} className="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-800">{s}</span>)}</div>
+      <p className="mt-4 rounded-md bg-amber-50 p-3 text-xs leading-5 text-amber-900">입학 성적: {major.admissionProfile.schoolRecordRange}</p>
       <div className="mt-5 space-y-3">
         <ScoreBar label="생활강도" score={major.lifestyleProfile.workIntensity} />
         <ScoreBar label="리스크" score={major.lifestyleProfile.burnoutRisk} />

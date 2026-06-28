@@ -1,4 +1,4 @@
-import type { Company, Job, Major, RiskItem, SalaryProfile, LifestyleProfile } from "@/types/career";
+import type { AdmissionProfile, Company, Job, Major, RiskItem, SalaryProfile, LifestyleProfile } from "@/types/career";
 import { riskTone } from "@/lib/utils";
 import { ExternalLinkButton } from "@/components/ui/ExternalLinkButton";
 import { ScoreBar } from "@/components/ui/ScoreBar";
@@ -51,6 +51,54 @@ export function SalaryLifestyleCard({ salaryProfile, lifestyleProfile, jobName }
       </div>
       <p className="mt-5 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-900">{salaryProfile.note}</p>
     </section>
+  );
+}
+
+export function AdmissionRequirementCard({ admissionProfile }: { admissionProfile: AdmissionProfile }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p className="text-sm font-bold text-slateblue">입학 성적 수준</p>
+          <h2 className="mt-1 text-2xl font-black text-navy">{admissionProfile.competitivenessLevel}</h2>
+        </div>
+        <span className="rounded-full bg-amber-50 px-3 py-1 text-sm font-bold text-amber-900">탐색용 범위</span>
+      </div>
+      <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <div className="rounded-md bg-slate-50 p-4">
+          <div className="text-xs font-bold text-slate-500">학생부/내신 관점</div>
+          <p className="mt-2 text-sm leading-6 text-navy">{admissionProfile.schoolRecordRange}</p>
+        </div>
+        <div className="rounded-md bg-slate-50 p-4">
+          <div className="text-xs font-bold text-slate-500">수능/정시 관점</div>
+          <p className="mt-2 text-sm leading-6 text-navy">{admissionProfile.csatRange}</p>
+        </div>
+      </div>
+      <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <InfoList title="핵심 관리 과목" items={admissionProfile.keySubjects} />
+        <InfoList title="준비 전략" items={admissionProfile.recommendedPreparation} />
+        <InfoList title="대안 경로" items={admissionProfile.alternativePaths} />
+      </div>
+      <div className="mt-5 rounded-md bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+        {admissionProfile.note}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <ExternalLinkButton href={admissionProfile.officialCheckLinks.adiga}>대입정보포털 어디가</ExternalLinkButton>
+        <ExternalLinkButton href={admissionProfile.officialCheckLinks.universityAdmissions}>입학처/입결 검색</ExternalLinkButton>
+        <ExternalLinkButton href={admissionProfile.officialCheckLinks.academyInfo}>대학알리미</ExternalLinkButton>
+      </div>
+    </section>
+  );
+}
+
+function InfoList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-md bg-slate-50 p-4">
+      <h3 className="font-black text-navy">{title}</h3>
+      <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+        {items.map((item) => <li key={item}>• {item}</li>)}
+      </ul>
+    </div>
   );
 }
 

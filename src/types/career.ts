@@ -23,6 +23,22 @@ export type SalaryProfile = {
   note: string;
 };
 
+export type AdmissionProfile = {
+  competitivenessLevel: "최상위권" | "상위권" | "중상위권" | "중위권" | "변동 큼";
+  schoolRecordRange: string;
+  csatRange: string;
+  keySubjects: string[];
+  recommendedPreparation: string[];
+  alternativePaths: string[];
+  checkPoints: string[];
+  officialCheckLinks: {
+    adiga: string;
+    universityAdmissions: string;
+    academyInfo: string;
+  };
+  note: string;
+};
+
 export type LifestyleProfile = {
   workIntensity: ScoreLevel;
   workLifeBalance: ScoreLevel;
@@ -69,6 +85,7 @@ export type Major = {
   relatedUniversityMajors: string[];
   relatedJobs: string[];
   relatedCompanies: string[];
+  admissionProfile: AdmissionProfile;
   salaryProfile: SalaryProfile;
   lifestyleProfile: LifestyleProfile;
   pros: string[];

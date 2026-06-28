@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { companies, jobs, majors, universityMajors } from "@/data/mockData";
-import { ExternalLinksPanel, ProsConsPanel, RiskAnalysis, RoadmapTimeline, SalaryLifestyleCard, SummaryHero } from "@/components/detail/DetailBlocks";
+import { AdmissionRequirementCard, ExternalLinksPanel, ProsConsPanel, RiskAnalysis, RoadmapTimeline, SalaryLifestyleCard, SummaryHero } from "@/components/detail/DetailBlocks";
 import { DisclaimerBox } from "@/components/ui/DisclaimerBox";
 import { ExternalLinkButton } from "@/components/ui/ExternalLinkButton";
 
@@ -20,6 +20,7 @@ export default async function MajorDetailPage({ params }: { params: Promise<{ id
     <main className="mx-auto max-w-7xl space-y-6 px-4 py-10">
       <SummaryHero item={major} type="학과" />
       <DisclaimerBox />
+      <AdmissionRequirementCard admissionProfile={major.admissionProfile} />
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-2xl font-black text-navy">학과 개요</h2>
         <p className="mt-3 leading-7 text-slate-700">{major.description}</p>

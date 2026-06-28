@@ -2,6 +2,7 @@ import type { AdmissionProfile, Company, Job, Major, RiskItem, SalaryProfile, Li
 import { riskTone } from "@/lib/utils";
 import { ExternalLinkButton } from "@/components/ui/ExternalLinkButton";
 import { ScoreBar } from "@/components/ui/ScoreBar";
+import { DonutMetric, MetricBarChart, RadarChart, RiskMatrix, RoadmapGraph } from "@/components/ui/Charts";
 
 export function SummaryHero({ item, type }: { item: Major | Job | Company; type: "학과" | "직업" | "기업" }) {
   const keywords = "keywords" in item ? item.keywords : "jobKeywords" in item ? item.jobKeywords : item.requiredAptitudes;
@@ -49,6 +50,30 @@ export function SalaryLifestyleCard({ salaryProfile, lifestyleProfile, jobName }
         <ScoreBar label="Work-Life Balance" score={lifestyleProfile.workLifeBalance} />
         <ScoreBar label="Burnout Risk" score={lifestyleProfile.burnoutRisk} />
       </div>
+      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_1fr_0.8fr]">
+        <RadarChart
+          title="생활 균형 레이더"
+          data={[
+            { label: "강도", value: lifestyleProfile.workIntensity },
+            { label: "워라밸", value: lifestyleProfile.workLifeBalance },
+            { label: "스트레스", value: lifestyleProfile.stressLevel },
+            { label: "자율성", value: lifestyleProfile.autonomy },
+            { label: "가족", value: lifestyleProfile.familyTime },
+            { label: "번아웃", value: lifestyleProfile.burnoutRisk }
+          ]}
+        />
+        <MetricBarChart
+          title="근무 환경 지표"
+          data={[
+            { label: "신체 피로", value: lifestyleProfile.physicalFatigue },
+            { label: "감정노동", value: lifestyleProfile.emotionalLabor },
+            { label: "야간근무", value: lifestyleProfile.nightShiftPossibility },
+            { label: "주말근무", value: lifestyleProfile.weekendWorkPossibility },
+            { label: "소득 변동성", value: salaryProfile.incomeVariability }
+          ]}
+        />
+        <DonutMetric label="소득 안정성" value={salaryProfile.incomeStability} caption="5에 가까울수록 예측 가능성이 높습니다." />
+      </div>
       <p className="mt-5 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-900">{salaryProfile.note}</p>
     </section>
   );
@@ -78,6 +103,24 @@ export function AdmissionRequirementCard({ admissionProfile }: { admissionProfil
         <InfoList title="핵심 관리 과목" items={admissionProfile.keySubjects} />
         <InfoList title="준비 전략" items={admissionProfile.recommendedPreparation} />
         <InfoList title="대안 경로" items={admissionProfile.alternativePaths} />
+      </div>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <MetricBarChart
+          title="입시 준비 집중도"
+          data={admissionProfile.keySubjects.map((subject, index) => ({
+            label: subject,
+            value: Math.max(62, 92 - index * 8),
+            note: index === 0 ? "가장 먼저 성취도와 세특을 점검합니다." : undefined
+          }))}
+        />
+        <RoadmapGraph
+          title="확인 순서"
+          steps={[
+            { label: "성적대", items: ["내신", "모의고사"] },
+            { label: "전형", items: ["수시", "정시", "지역인재"] },
+            { label: "공식자료", items: ["모집요강", "입시결과"] }
+          ]}
+        />
       </div>
       <div className="mt-5 rounded-md bg-amber-50 p-4 text-sm leading-6 text-amber-950">
         {admissionProfile.note}
@@ -125,6 +168,9 @@ export function RiskAnalysis({ title, riskItems, mitigationStrategies }: { title
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-2xl font-black text-navy">{title}</h2>
+      <div className="mt-5">
+        <RiskMatrix title="리스크 한눈에 보기" risks={riskItems.map((risk) => ({ name: risk.name, level: risk.level }))} />
+      </div>
       <div className="mt-5 grid gap-3 md:grid-cols-2">
         {riskItems.map((risk) => (
           <article key={risk.name} className="rounded-md border border-slate-200 p-4">
@@ -146,6 +192,16 @@ export function RoadmapTimeline({ roadmap }: { roadmap: { grade10: string[]; gra
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-2xl font-black text-navy">고등학교 준비 로드맵</h2>
+      <div className="mt-5">
+        <RoadmapGraph
+          title="학년별 준비 흐름"
+          steps={[
+            { label: "1학년", items: roadmap.grade10 },
+            { label: "2학년", items: roadmap.grade11 },
+            { label: "3학년", items: roadmap.grade12 }
+          ]}
+        />
+      </div>
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {[
           ["1학년", roadmap.grade10],

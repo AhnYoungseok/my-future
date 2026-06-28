@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CategoryCard, MajorCard } from "@/components/cards/Cards";
 import { DisclaimerBox } from "@/components/ui/DisclaimerBox";
 import { majors } from "@/data/mockData";
+import { MetricBarChart } from "@/components/ui/Charts";
 
 const homeCards = [
   ["메디컬 계열", "의예과, 치의예과, 한의예과, 약학과, 수의예과, 간호학과. 전문직, 면허, 안정성, 긴 수련기간, 높은 책임감을 함께 봅니다.", "/medical", "green"],
@@ -39,6 +40,10 @@ export default function HomePage() {
   const representativeMajors = representativeMajorIds
     .map((id) => majors.find((major) => major.id === id))
     .filter((major): major is (typeof majors)[number] => Boolean(major));
+  const categoryCounts = Array.from(new Set(majors.map((major) => major.category))).map((category) => ({
+    label: `${category} (${majors.filter((major) => major.category === category).length})`,
+    value: Math.min(100, majors.filter((major) => major.category === category).length * 16)
+  }));
 
   return (
     <main>
@@ -73,6 +78,9 @@ export default function HomePage() {
         </div>
         <h2 className="mt-12 text-3xl font-black text-navy">전체 전공계열 대표 학과</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">메디컬만 먼저 보이지 않도록 공학, AI, 바이오, 경영·경제, 교육·심리, 법·공공, 디자인·콘텐츠, 환경·농생명, 국제계열까지 대표 학과를 함께 배치했습니다.</p>
+        <div className="mt-5">
+          <MetricBarChart title="현재 탑재된 전공계열 분포" data={categoryCounts} />
+        </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {representativeMajors.map((major) => <MajorCard key={major.id} major={major} />)}
         </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { jobRoles, occupations } from "@/data/seed/jobRoles.core";
 import { ExternalLinkButton } from "@/components/ui/ExternalLinkButton";
 import { getVerificationLabel, getVerificationTone } from "@/lib/validation";
+import { MetricBarChart, RadarChart, RiskMatrix } from "@/components/ui/Charts";
 
 export function generateStaticParams() {
   return jobRoles.map((role) => ({ id: role.id }));
@@ -38,6 +39,28 @@ export default async function JobRoleDetailPage({ params }: { params: Promise<{ 
         <Info title="관련 학과" items={role.relatedMajors} />
         <Info title="관련 기업/기관" items={role.relatedCompanies} />
       </div>
+
+      <section className="grid gap-4 lg:grid-cols-3">
+        <RadarChart
+          title="직무 적합 신호"
+          data={[
+            { label: "전공", value: 4 },
+            { label: "기술", value: role.requiredSkills.length >= 3 ? 5 : 3 },
+            { label: "협업", value: 4 },
+            { label: "현장", value: role.workStyle.includes("현장") || role.workStyle.includes("병원") ? 5 : 3 },
+            { label: "변화", value: role.futureOutlook.includes("AI") ? 5 : 3 },
+            { label: "책임", value: role.workStyle.includes("책임") || role.summary.includes("환자") ? 5 : 4 }
+          ]}
+        />
+        <MetricBarChart
+          title="고등학교 준비 우선순위"
+          data={role.highSchoolPreparation.map((item, index) => ({
+            label: item,
+            value: 88 - index * 9
+          }))}
+        />
+        <RiskMatrix title="직무 리스크 위치" risks={role.risks.map((risk) => ({ name: risk.name, level: risk.level }))} />
+      </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-2xl font-black text-navy">연봉·생활·전망</h2>

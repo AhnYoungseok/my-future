@@ -1,9 +1,11 @@
 import type { ComparisonPreset } from "@/types/career";
+import { ComparisonSignalGraph } from "@/components/ui/Charts";
 
 export function ComparisonTable({ preset }: { preset: ComparisonPreset }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-2xl font-black text-navy">{preset.title}</h2>
+      <ComparisonSignalGraph items={preset.items} />
       <div className="scrollbar-soft mt-5 overflow-x-auto">
         <table className="w-full min-w-[760px] border-collapse text-sm">
           <thead>

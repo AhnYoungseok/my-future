@@ -9,6 +9,7 @@ import { defaultStudentProfile, getCategoryRepresentativeMajors, getTopRecommend
 import type { DiagnosisMode, StudentProfile } from "@/types/career";
 import { savePortfolio } from "@/lib/storage";
 import { ScoreBar } from "@/components/ui/ScoreBar";
+import { MetricBarChart, RadarChart } from "@/components/ui/Charts";
 
 const sections = [
   {
@@ -147,6 +148,26 @@ export function DiagnosisClient() {
             <p>{profileSummary.parentMisread}</p>
             <p>{profileSummary.counselorCheck}</p>
           </div>
+        </div>
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          <RadarChart
+            title="성향 균형 레이더"
+            data={[
+              { label: "의료", value: profile.interests.medical },
+              { label: "기술", value: profile.interests.semiconductor },
+              { label: "AI", value: profile.interests.ai },
+              { label: "연구", value: profile.interests.research },
+              { label: "사람", value: profile.interests.helping },
+              { label: "안정", value: profile.values.stability }
+            ]}
+          />
+          <MetricBarChart
+            title="핵심 과목 신호"
+            data={["수학", "물리", "화학", "생명과학", "정보/코딩", "사회/경제"].map((subject) => ({
+              label: subject,
+              value: profile.subjects[subject] || 3
+            }))}
+          />
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <ResultList title="전체 계열별 추천 학과" items={categoryMajorResults} hrefPrefix="/majors" />

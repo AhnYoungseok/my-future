@@ -2,6 +2,7 @@ import Link from "next/link";
 import { universities, universityMajors } from "@/data/mockData";
 import { ExternalLinkButton } from "@/components/ui/ExternalLinkButton";
 import { getVerificationLabel, getVerificationTone } from "@/lib/validation";
+import { DonutMetric, MetricBarChart } from "@/components/ui/Charts";
 
 export default function UniversitiesPage() {
   const regions = Array.from(new Set(universities.map((university) => university.region)));
@@ -11,10 +12,13 @@ export default function UniversitiesPage() {
       <p className="mt-3 max-w-3xl text-slate-600">대학과 모집단위는 매년 바뀔 수 있으므로 공식 입학처와 대학알리미를 반드시 확인하세요. 현재 대학-학과 연결은 전국 공식 데이터 연동 전의 탐색 후보이며, 실제 설치 학과로 단정하지 않습니다.</p>
       <section className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
         <h2 className="text-xl font-black text-navy">검증 원칙</h2>
-        <div className="mt-3 grid gap-3 text-sm leading-6 text-amber-950 md:grid-cols-3">
-          <p>대학-학과 조합은 공식 데이터로 확인되기 전까지 “검증 필요”로 표시합니다.</p>
-          <p>입학 성적과 모집단위는 합격 가능성 판단이 아니라 공식 확인을 위한 안내입니다.</p>
-          <p>전국 데이터는 대학알리미, 대입정보포털, 대학 입학처 기준으로 확장할 구조입니다.</p>
+        <div className="mt-3 grid gap-4 md:grid-cols-[0.7fr_1.3fr]">
+          <DonutMetric label="공식 검증률" value={0} caption="공식 대학-학과 데이터 연동 전입니다." />
+          <div className="grid gap-3 text-sm leading-6 text-amber-950 md:grid-cols-3">
+            <p>대학-학과 조합은 공식 데이터로 확인되기 전까지 “검증 필요”로 표시합니다.</p>
+            <p>입학 성적과 모집단위는 합격 가능성 판단이 아니라 공식 확인을 위한 안내입니다.</p>
+            <p>전국 데이터는 대학알리미, 대입정보포털, 대학 입학처 기준으로 확장할 구조입니다.</p>
+          </div>
         </div>
       </section>
       <div className="mt-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
@@ -22,6 +26,17 @@ export default function UniversitiesPage() {
         <Filter title="학교종류" items={["전체", "일반대학", "전문대학", "교육대학", "사이버대학"]} />
         <Filter title="계열" items={["전체", "메디컬", "반도체", "AI·소프트웨어", "경영·경제", "디자인·콘텐츠"]} />
         <Filter title="검증상태" items={["검증 필요", "공식 확인", "후보"]} />
+      </div>
+      <div className="mt-6">
+        <MetricBarChart
+          title="대학 데이터 준비 상태"
+          data={[
+            { label: "대학 기본정보", value: 60, note: "대표 대학 시드가 들어가 있습니다." },
+            { label: "학과 연결", value: 20, note: "탐색 후보이며 공식 검증 전입니다." },
+            { label: "입학처 링크", value: 75, note: "공식 확인을 위한 연결이 우선 제공됩니다." },
+            { label: "전국 공식 연동", value: 10, note: "대학알리미/어디가 연동 구조를 준비했습니다." }
+          ]}
+        />
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {universities.map((university) => {

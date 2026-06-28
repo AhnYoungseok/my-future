@@ -1,12 +1,35 @@
 import { featuredReports, majors } from "@/data/mockData";
 import { ReportSection } from "@/components/report/ReportSection";
 import { professionalReportSections } from "@/lib/report";
+import { MetricBarChart, RadarChart } from "@/components/ui/Charts";
 
 export default function ReportPage() {
   return (
     <main className="mx-auto max-w-7xl space-y-5 px-4 py-10">
       <h1 className="text-4xl font-black text-navy">학생·학부모 리포트</h1>
       <p className="max-w-3xl text-slate-600">진단 결과를 단순 순위가 아니라 학생, 학부모, 상담교사가 함께 의사결정할 수 있는 컨설팅 문서 구조로 정리합니다.</p>
+      <section className="grid gap-4 lg:grid-cols-2">
+        <RadarChart
+          title="리포트 판단 영역"
+          data={[
+            { label: "성향", value: 5 },
+            { label: "과목", value: 5 },
+            { label: "입시", value: 4 },
+            { label: "직무", value: 5 },
+            { label: "생활", value: 4 },
+            { label: "대안", value: 5 }
+          ]}
+        />
+        <MetricBarChart
+          title="대상별 활용도"
+          data={[
+            { label: "학생용", value: 88, note: "준비 과목과 탐구활동을 이해합니다." },
+            { label: "학부모용", value: 84, note: "무리한 선택과 대안 경로를 함께 봅니다." },
+            { label: "상담교사용", value: 90, note: "세특, 비교 후보, 공식 확인 링크를 정리합니다." },
+            { label: "10년 시나리오", value: 78, note: "대학 이후 삶의 모습을 비교합니다." }
+          ]}
+        />
+      </section>
       <ReportSection title="학생용 리포트">
         내 성향 요약, 추천 학과, 추천 직업, 준비 과목, 탐구활동 추천, 주의할 점을 단정하지 않는 문장으로 정리합니다.
       </ReportSection>

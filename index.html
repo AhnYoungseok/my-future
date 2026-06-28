@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>고등학생 진로 설계 보드</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Career Path Finder</p>
+        <h1>대학·학과·직업을 한 번에 비교하는 진로 설계 보드</h1>
+        <p class="lead">
+          메디컬과 반도체 분야를 중심으로 학과, 대학 홈페이지, 직업정보, 회사 채용,
+          유튜브 자료, 연봉 수준을 연결해 탐색합니다.
+        </p>
+      </div>
+      <div class="date-pill">자료 링크 큐레이션: 2026.06.28</div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel controls-panel" aria-label="학생 조건 설정">
+        <h2>학생 조건</h2>
+        <label class="field">
+          <span>관심 분야</span>
+          <select id="domainSelect">
+            <option value="all">전체 비교</option>
+            <option value="medical">메디컬 집중</option>
+            <option value="semiconductor">반도체 집중</option>
+            <option value="convergence">융합/대안 경로</option>
+          </select>
+        </label>
+
+        <fieldset class="chip-group">
+          <legend>강점 과목</legend>
+          <label><input type="checkbox" value="biology" checked /> 생명</label>
+          <label><input type="checkbox" value="chemistry" checked /> 화학</label>
+          <label><input type="checkbox" value="math" checked /> 수학</label>
+          <label><input type="checkbox" value="physics" /> 물리</label>
+          <label><input type="checkbox" value="coding" /> 코딩</label>
+          <label><input type="checkbox" value="english" /> 영어</label>
+        </fieldset>
+
+        <div class="slider-list">
+          <label>
+            <span>장기 학습 감당</span>
+            <input id="studySlider" type="range" min="1" max="5" value="4" />
+          </label>
+          <label>
+            <span>취업 안정성 선호</span>
+            <input id="stabilitySlider" type="range" min="1" max="5" value="4" />
+          </label>
+          <label>
+            <span>높은 연봉 중요도</span>
+            <input id="salarySlider" type="range" min="1" max="5" value="4" />
+          </label>
+          <label>
+            <span>사람을 돕는 일 선호</span>
+            <input id="careSlider" type="range" min="1" max="5" value="4" />
+          </label>
+        </div>
+
+        <button id="resetButton" class="ghost-button" type="button">초기화</button>
+      </aside>
+
+      <section class="mainstage">
+        <section class="scoreboard" aria-label="추천 경로 요약">
+          <div>
+            <p class="eyebrow">우선 탐색 경로</p>
+            <h2 id="bestTitle">계산 중</h2>
+            <p id="bestReason" class="muted"></p>
+          </div>
+          <canvas id="scoreCanvas" width="520" height="180" aria-label="진로 점수 그래프"></canvas>
+        </section>
+
+        <div class="tabs" role="tablist" aria-label="보기 전환">
+          <button class="tab is-active" data-view="cards" type="button">경로 카드</button>
+          <button class="tab" data-view="compare" type="button">비교표</button>
+          <button class="tab" data-view="roadmap" type="button">실행 로드맵</button>
+          <button class="tab" data-view="sources" type="button">자료 연결</button>
+        </div>
+
+        <section id="cardsView" class="view is-active">
+          <div id="pathGrid" class="path-grid"></div>
+        </section>
+
+        <section id="compareView" class="view">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>경로</th>
+                  <th>핵심 학과</th>
+                  <th>준비 과목</th>
+                  <th>진입 기간</th>
+                  <th>연봉 수준</th>
+                  <th>최신 확인</th>
+                </tr>
+              </thead>
+              <tbody id="compareBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="roadmapView" class="view">
+          <div class="roadmap">
+            <article>
+              <span class="step">1</span>
+              <h3>흥미 검증</h3>
+              <p>학과 홈페이지의 교과목표와 유튜브 직무 인터뷰를 보고, 싫어하지 않는 과목을 먼저 확인합니다.</p>
+            </article>
+            <article>
+              <span class="step">2</span>
+              <h3>입시 현실성 확인</h3>
+              <p>대입정보포털과 대학알리미에서 모집단위, 전형, 취업률, 등록금, 장학 정보를 비교합니다.</p>
+            </article>
+            <article>
+              <span class="step">3</span>
+              <h3>직업 시장 확인</h3>
+              <p>워크넷·임금직업포털·기업 채용 페이지에서 직무명, 요구역량, 채용공고 수를 확인합니다.</p>
+            </article>
+            <article>
+              <span class="step">4</span>
+              <h3>대안 경로 설계</h3>
+              <p>의학과만 보지 않고 의생명·의공학·간호·보건, 반도체 계약학과와 전기전자·신소재를 함께 둡니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="sourcesView" class="view">
+          <div id="sourceList" class="source-list"></div>
+        </section>
+      </section>
+
+      <aside class="panel detail-panel" aria-label="선택한 경로 상세">
+        <div id="detail"></div>
+      </aside>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { companies, jobs } from "@/data/mockData";
+import { jobRoles } from "@/data/seed/jobRoles.core";
 import { ExternalLinksPanel, ProsConsPanel, RiskAnalysis, SalaryLifestyleCard, SummaryHero } from "@/components/detail/DetailBlocks";
 import { DisclaimerBox } from "@/components/ui/DisclaimerBox";
 
@@ -12,6 +14,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   const job = jobs.find((item) => item.id === id);
   if (!job) notFound();
   const relatedCompanies = companies.filter((company) => job.relatedCompanies.includes(company.name) || company.relatedJobs.includes(job.name));
+  const relatedRoles = jobRoles.filter((role) => role.category === job.category || role.relatedMajors.some((major) => job.relatedMajors.includes(major))).slice(0, 8);
   return (
     <main className="mx-auto max-w-7xl space-y-6 px-4 py-10">
       <SummaryHero item={job} type="직업" />
@@ -26,6 +29,20 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         </div>
       </section>
       <SalaryLifestyleCard jobName={job.name} salaryProfile={job.salaryProfile} lifestyleProfile={job.lifestyleProfile} />
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-2xl font-black text-navy">관련 세부 직무</h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {relatedRoles.map((role) => (
+            <Link key={role.id} href={`/job-roles/${role.id}`} className="rounded-md border border-slate-200 p-4 hover:border-slateblue">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="font-black text-navy">{role.name}</h3>
+                <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-black text-amber-900">검증 필요</span>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{role.summary}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
       <ProsConsPanel pros={job.pros} cons={job.cons} />
       <RiskAnalysis title="직업 리스크" riskItems={job.risks} />
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

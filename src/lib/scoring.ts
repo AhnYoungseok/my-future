@@ -21,7 +21,10 @@ export const defaultStudentProfile: StudentProfile = {
     지구과학: 3,
     "정보/코딩": 3,
     "사회/경제": 3,
-    "윤리/철학": 3
+    "윤리/철학": 3,
+    "정치와법": 3,
+    "역사": 3,
+    "미술/디자인": 3
   },
   traits: {
     longStudy: 4,
@@ -64,7 +67,14 @@ function categoryInterest(profile: StudentProfile, category: string) {
   if (category === "반도체") return avg([profile.interests.semiconductor, profile.interests.growth, profile.traits.logic, profile.traits.changeTolerance]);
   if (category === "AI·소프트웨어") return avg([profile.interests.ai, profile.traits.logic, profile.values.growth]);
   if (category === "바이오·제약") return avg([profile.interests.bio, profile.interests.research, profile.subjects.생명과학, profile.subjects.화학]);
-  return avg([profile.values.growth, profile.values.expertise]);
+  if (category === "기계·로봇" || category === "전기·에너지" || category === "미래차·배터리") return avg([profile.subjects.수학, profile.subjects.물리, profile.traits.logic, profile.values.growth]);
+  if (category === "화학·소재" || category === "환경·농생명") return avg([profile.subjects.화학, profile.subjects.생명과학, profile.interests.research]);
+  if (category === "경영·경제") return avg([profile.subjects["사회/경제"], profile.values.salary, profile.values.growth, profile.traits.logic]);
+  if (category === "교육·심리" || category === "교육") return avg([profile.interests.helping, profile.subjects.국어, profile.values.contribution, profile.traits.peopleFacing]);
+  if (category === "법·공공" || category === "공공·행정" || category === "사회과학·정책" || category === "국제·외교") return avg([profile.subjects.국어, profile.subjects["사회/경제"], profile.subjects.영어, profile.values.stability]);
+  if (category === "디자인·콘텐츠") return avg([profile.subjects["미술/디자인"] || 3, profile.subjects.국어, profile.values.growth, profile.traits.changeTolerance]);
+  if (category === "보건의료") return avg([profile.interests.helping, profile.interests.medical, profile.subjects.생명과학, profile.traits.peopleFacing]);
+  return avg([profile.values.growth, profile.values.expertise, profile.subjects.영어]);
 }
 
 function subjectScore(profile: StudentProfile, subjects: string[]) {

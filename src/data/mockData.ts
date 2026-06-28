@@ -13,10 +13,14 @@ import type {
   UniversityMajor
 } from "@/types/career";
 import {
+  createAcademyInfoSearchUrl,
+  createAdigaSearchUrl,
+  createDepartmentOfficialSearchUrl,
   createDartSearchUrl,
   createGoogleSearchUrl,
   createJobKoreaSearchUrl,
   createSaraminSearchUrl,
+  createUniversityAdmissionSearchUrl,
   createUniversitySearchUrl,
   createWork24SearchUrl,
   createYoutubeSearchUrl
@@ -114,9 +118,9 @@ const admission = (id: string, name: string, category: Category, subjects: strin
       "최종 지원 전 각 대학 입학처 모집요강과 대입정보포털 어디가 성적분석으로 재확인"
     ],
     officialCheckLinks: {
-      adiga: "https://www.adiga.kr/",
-      universityAdmissions: createGoogleSearchUrl(`${name} 입학처 모집요강 입시결과`),
-      academyInfo: "https://www.academyinfo.go.kr/"
+      adiga: createAdigaSearchUrl(name),
+      universityAdmissions: createUniversityAdmissionSearchUrl(name),
+      academyInfo: createAcademyInfoSearchUrl(name)
     },
     note: "성적 수준은 mock data 기반의 탐색용 범위입니다. 실제 합격 가능성은 대학, 전형, 모집인원, 지역인재, 수능최저, 면접, 학생부 평가 방식에 따라 매년 달라집니다."
   };
@@ -200,7 +204,19 @@ const majorSeeds: Array<[string, string, Category, string, string[], string[], S
   ["physics", "물리학과", "반도체", "기초과학 기반으로 반도체, 광학, 데이터, 연구직까지 가는 경로", ["기초과학", "양자", "소자", "연구"], ["물리", "수학"], salary("보통", "진로별 편차 큼", "대학원·산업 전환에 따라 상승", "연구/금융/데이터 전환 가능", "전문화 필요", 2, 4), life(3, 3, 3, 1, 3, 3, "순수학문 흥미와 장기 연구 적성이 중요하며 응용 진로 설계를 병행해야 합니다.")],
   ["mechanical", "기계공학과", "미래차·배터리", "제조, 로봇, 미래차, 장비, 에너지로 확장되는 전통 공학 기반", ["설계", "제조", "로봇", "장비"], ["수학", "물리"], salary("보통", "기업·직무별 차이", "제조·장비 경력 상승", "상위 기술직 가능", "산업별 차이", 3, 3), life(4, 3, 3, 2, 3, 3, "직무 폭이 넓고 현장 기반 역량이 중요합니다.")],
   ["electrical", "전기공학과", "미래차·배터리", "전력, 모터, 배터리, 반도체 장비, 에너지로 연결되는 경로", ["전력", "전기", "배터리", "장비"], ["수학", "물리"], salary("높은 편", "기업별 차이", "에너지·배터리·장비 상승", "전문직무 상위 가능", "산업 수요 영향", 3, 3), life(3, 3, 3, 2, 3, 3, "전기 기반 인프라 수요가 꾸준하고 미래차·배터리와 연결됩니다.")],
-  ["data-science", "데이터사이언스학과", "AI·소프트웨어", "통계, 코딩, 도메인 지식을 활용해 의사결정을 돕는 경로", ["데이터", "통계", "AI", "분석"], ["수학", "정보/코딩", "사회/경제"], salary("높은 편", "역량·산업별 차이", "경력 이후 상승 가능", "상위권 편차 큼", "도메인 전문성 영향", 3, 4), life(3, 3, 4, 1, 3, 3, "수학·통계와 비즈니스 문제 이해를 함께 요구합니다.")]
+  ["data-science", "데이터사이언스학과", "AI·소프트웨어", "통계, 코딩, 도메인 지식을 활용해 의사결정을 돕는 경로", ["데이터", "통계", "AI", "분석"], ["수학", "정보/코딩", "사회/경제"], salary("높은 편", "역량·산업별 차이", "경력 이후 상승 가능", "상위권 편차 큼", "도메인 전문성 영향", 3, 4), life(3, 3, 4, 1, 3, 3, "수학·통계와 비즈니스 문제 이해를 함께 요구합니다.")],
+  ["robotics", "로봇공학과", "기계·로봇", "기계, 전자, 제어, AI를 융합해 자동화 시스템을 설계하는 경로", ["로봇", "자동화", "제어", "제조"], ["수학", "물리", "정보/코딩"], salary("높은 편", "기업·직무별 차이", "제조·자동화 경력 상승", "상위 기술직 가능", "산업 투자 영향", 3, 4), life(4, 3, 3, 2, 3, 3, "현장 장비와 소프트웨어를 함께 이해해야 하며 프로젝트형 업무가 많습니다.")],
+  ["energy", "에너지공학과", "전기·에너지", "전력, 신재생, 배터리, 에너지 효율을 다루는 공학 경로", ["전력", "신재생", "배터리", "인프라"], ["수학", "물리", "화학"], salary("보통", "기관·기업별 차이", "공기업·전문기업 경력 상승", "전문직무 가능", "정책·산업 영향", 4, 3), life(3, 3, 3, 2, 3, 3, "공공 인프라와 민간 에너지 산업을 함께 볼 수 있습니다.")],
+  ["business", "경영학과", "경영·경제", "조직, 전략, 마케팅, 회계, 창업으로 확장되는 범용 사회계열 경로", ["전략", "마케팅", "회계", "창업"], ["국어", "영어", "사회/경제"], salary("편차 큼", "기업·직무별 차이 큼", "성과와 직무에 따라 상승", "임원·창업 시 편차 큼", "산업·성과 영향 큼", 3, 5), life(3, 3, 4, 1, 3, 3, "학과명보다 인턴, 데이터, 회계, 영어, 산업 이해의 조합이 중요합니다.")],
+  ["economics", "경제학과", "경영·경제", "시장, 정책, 금융, 데이터 분석을 연결하는 사회과학 기반 경로", ["경제", "금융", "통계", "정책"], ["수학", "사회/경제", "영어"], salary("편차 큼", "직무별 차이 큼", "금융·데이터 직무 상승", "전문직·금융권 상위 가능", "시장 변동 영향", 3, 5), life(3, 3, 4, 1, 3, 3, "수학과 글쓰기, 데이터 해석 능력을 함께 요구합니다.")],
+  ["education", "교육학과", "교육·심리", "교육 제도, 학습 설계, 상담, 에듀테크로 확장되는 경로", ["교육", "상담", "학습", "에듀테크"], ["국어", "영어", "윤리/철학"], salary("보통", "기관·자격별 차이", "교직·기업교육·에듀테크별 차이", "전문가 성장 가능", "공공·민간 경로 차이", 3, 3), life(3, 3, 3, 1, 3, 3, "교원 경로와 교육기업 경로가 다르므로 자격과 직무를 분리해서 봐야 합니다.")],
+  ["psychology", "심리학과", "교육·심리", "인간 행동, 상담, 조직, 데이터, UX로 확장되는 경로", ["심리", "상담", "행동", "UX"], ["국어", "영어", "사회/경제"], salary("보통", "자격·대학원별 차이", "상담·HR·UX별 차이", "전문자격 시 상승", "대학원 영향 큼", 3, 4), life(3, 3, 4, 1, 3, 4, "상담직은 감정노동, 연구·UX 경로는 통계와 데이터 역량을 확인해야 합니다.")],
+  ["law-public", "법학/공공정책학과", "법·공공", "법, 행정, 정책, 공공기관, 컴플라이언스로 연결되는 경로", ["법", "행정", "정책", "공공"], ["국어", "영어", "정치와법"], salary("보통", "시험·기관별 차이", "공공·기업법무별 차이", "전문자격 시 상승", "시험 성패 영향", 4, 3), life(3, 3, 4, 1, 3, 3, "시험 준비 기간과 공공조직 적응, 민원·규정 업무를 함께 봐야 합니다.")],
+  ["media-content", "미디어콘텐츠학과", "디자인·콘텐츠", "영상, 플랫폼, 콘텐츠 기획, 디지털 마케팅으로 확장되는 경로", ["미디어", "영상", "콘텐츠", "플랫폼"], ["국어", "영어", "사회/경제"], salary("편차 큼", "포트폴리오·기업별 차이", "프로젝트와 성과에 따라 상승", "상위 제작자·기획자 편차 큼", "산업 트렌드 영향", 2, 5), life(4, 2, 4, 2, 2, 4, "포트폴리오와 실무 경험이 중요하며 마감, 야간 촬영, 프리랜서 소득 편차를 봐야 합니다.")],
+  ["design", "시각/UX디자인학과", "디자인·콘텐츠", "브랜드, UI/UX, 제품 경험을 설계하는 창의·실무 경로", ["디자인", "UX", "브랜드", "포트폴리오"], ["미술/디자인", "국어", "정보/코딩"], salary("편차 큼", "포트폴리오·기업별 차이", "경력과 실무역량에 따라 상승", "프리랜서·리드급 편차 큼", "경기·프로젝트 영향", 2, 5), life(4, 3, 4, 1, 3, 4, "감각뿐 아니라 문제정의, 리서치, 협업, 포트폴리오가 핵심입니다.")],
+  ["environment", "환경공학과", "환경·농생명", "환경 안전, 수처리, 기후, ESG, 공공 인프라로 연결되는 경로", ["환경", "기후", "ESG", "안전"], ["화학", "생명과학", "지구과학"], salary("보통", "기관·기업별 차이", "공공·컨설팅 경력 상승", "전문자격 시 상승", "정책 영향", 3, 3), life(3, 3, 3, 2, 3, 3, "공공성과 현장성이 함께 있으며 환경 규제와 데이터 분석을 같이 봐야 합니다.")],
+  ["food-agri", "식품/농생명공학과", "환경·농생명", "식품 안전, 스마트팜, 종자, 농생명 연구로 확장되는 경로", ["식품", "농생명", "스마트팜", "품질"], ["생명과학", "화학", "지구과학"], salary("보통", "기업·직무별 차이", "품질·연구·스마트팜별 차이", "전문가 성장 가능", "산업별 차이", 3, 3), life(3, 3, 3, 1, 3, 3, "품질관리, 연구, 생산, 스마트팜 중 어느 직무인지 빠르게 구체화해야 합니다.")],
+  ["international", "국제학/정치외교학과", "국제·외교", "국제관계, 외교, 통상, NGO, 글로벌 기업으로 연결되는 경로", ["국제", "외교", "통상", "언어"], ["영어", "사회/경제", "역사"], salary("편차 큼", "기관·언어역량별 차이", "국제기구·기업 경력별 차이", "전문가 성장 가능", "경쟁과 이동성 영향", 2, 4), life(3, 3, 4, 1, 3, 3, "언어, 글쓰기, 국제 이슈 이해와 함께 구체 직무를 빨리 정해야 합니다.")]
 ];
 
 export const majors: Major[] = majorSeeds.map(([id, name, category, summary, keywords, subjects, salaryProfile, lifestyleProfile]) => ({
@@ -234,7 +250,7 @@ export const majors: Major[] = majorSeeds.map(([id, name, category, summary, key
   parentAdvice: "아이의 선호와 성취를 분리해서 보고, 명성보다 생활 방식과 장기 지속 가능성을 함께 대화하세요.",
   counselorAdvice: "세특은 과목 지식, 질문, 검증 과정, 진로 연결이 보이도록 설계하는 것이 좋습니다.",
   externalLinks: {
-    officialSearch: createGoogleSearchUrl(`${name} 학과 공식 홈페이지 교육과정`),
+    officialSearch: createDepartmentOfficialSearchUrl("관심 대학", name),
     youtubeSearch: createYoutubeSearchUrl(`${name} 현실 직무 인터뷰`),
     jobSearch: createWork24SearchUrl(name),
     salaryReference: "https://www.wagework.go.kr/"
@@ -261,7 +277,20 @@ const jobSeeds: Array<[string, string, Category, string, string[], string[]]> = 
   ["software-developer", "소프트웨어 개발자", "AI·소프트웨어", "웹, 앱, 서버, 플랫폼 기능을 설계하고 구현합니다.", ["컴퓨터공학과"], ["우아한형제들", "삼성SDS"]],
   ["bio-researcher", "바이오 연구원", "바이오·제약", "세포·유전자·단백질 기반 연구와 분석을 수행합니다.", ["생명공학과"], ["GC녹십자", "셀트리온"]],
   ["battery-researcher", "배터리 연구원", "미래차·배터리", "전극, 전해질, 셀 성능 개선 연구를 수행합니다.", ["화학공학과", "신소재공학과"], ["LG에너지솔루션", "삼성SDI"]],
-  ["electrical-engineer", "전기전자 엔지니어", "미래차·배터리", "전력, 회로, 제어, 장비 시스템을 설계하고 관리합니다.", ["전기공학과", "전자공학과"], ["현대오토에버", "LG CNS"]]
+  ["electrical-engineer", "전기전자 엔지니어", "미래차·배터리", "전력, 회로, 제어, 장비 시스템을 설계하고 관리합니다.", ["전기공학과", "전자공학과"], ["현대오토에버", "LG CNS"]],
+  ["robotics-engineer", "로봇 엔지니어", "기계·로봇", "기계, 제어, 센서, 소프트웨어를 연결해 자동화 시스템을 만듭니다.", ["로봇공학과", "기계공학과"], ["현대자동차", "로봇 스타트업"]],
+  ["energy-engineer", "에너지 엔지니어", "전기·에너지", "전력망, 신재생, 설비 효율, 에너지 저장 시스템을 관리합니다.", ["에너지공학과", "전기공학과"], ["한국전력", "에너지 기업"]],
+  ["business-planner", "경영기획자", "경영·경제", "사업 전략, 예산, 성과 지표, 신규 사업 검토를 수행합니다.", ["경영학과", "경제학과"], ["대기업", "스타트업"]],
+  ["financial-analyst", "금융 애널리스트", "경영·경제", "기업, 시장, 산업을 분석해 투자와 의사결정 근거를 만듭니다.", ["경제학과", "경영학과"], ["증권사", "자산운용사"]],
+  ["teacher", "교사", "교육·심리", "수업, 평가, 생활지도, 진로 상담을 수행합니다.", ["교육학과", "사범대학"], ["학교", "교육청"]],
+  ["counselor", "상담/심리 전문가", "교육·심리", "정서, 진로, 조직, 학습 문제를 상담하고 평가합니다.", ["심리학과", "상담학과"], ["상담센터", "학교"]],
+  ["public-officer", "공공기관/행정 사무직", "법·공공", "정책 집행, 행정서비스, 문서와 제도 운영을 담당합니다.", ["법학/공공정책학과"], ["중앙부처", "공공기관"]],
+  ["policy-analyst", "정책 분석가", "사회과학·정책", "사회문제 자료를 분석하고 정책 대안을 제안합니다.", ["법학/공공정책학과", "경제학과"], ["연구기관", "공공기관"]],
+  ["ux-designer", "UX 디자이너", "디자인·콘텐츠", "사용자 리서치와 서비스 화면 흐름을 설계합니다.", ["시각/UX디자인학과", "심리학과"], ["IT기업", "디자인 에이전시"]],
+  ["content-producer", "콘텐츠 PD/기획자", "디자인·콘텐츠", "영상, 플랫폼, 브랜드 콘텐츠를 기획하고 제작합니다.", ["미디어콘텐츠학과"], ["방송사", "콘텐츠 기업"]],
+  ["environment-consultant", "환경 컨설턴트", "환경·농생명", "환경 규제, ESG, 현장 자료를 분석해 개선안을 제시합니다.", ["환경공학과"], ["컨설팅사", "공공기관"]],
+  ["food-quality-manager", "식품 품질관리자", "환경·농생명", "식품 안전, 품질 시험, 위생 기준을 관리합니다.", ["식품/농생명공학과"], ["식품회사", "연구소"]],
+  ["international-specialist", "국제협력/통상 전문가", "국제·외교", "국제 이슈, 통상, 개발협력, 글로벌 사업을 조율합니다.", ["국제학/정치외교학과"], ["국제기구", "글로벌 기업"]]
 ];
 
 export const jobs: Job[] = jobSeeds.map(([id, name, category, summary, relatedMajors, relatedCompanies]) => ({
@@ -323,11 +352,19 @@ export const universities: University[] = [
 ].map(([id, name, region, type, homepageUrl, admissionUrl]) => ({
   id,
   name,
+  aliases: [name],
   region,
   type: type as University["type"],
+  schoolType: "일반대학" as const,
   homepageUrl,
   admissionUrl,
-  academyInfoUrl: "https://www.academyinfo.go.kr/"
+  academyInfoUrl: createAcademyInfoSearchUrl(name),
+  adigaUrl: createAdigaSearchUrl(name),
+  dataSource: "seed/manual university list",
+  sourceYear: 2026,
+  verified: false,
+  verificationStatus: "needs_review" as const,
+  lastCheckedAt: "2026-06-28"
 }));
 
 const companySeeds: Array<[string, string, string, Category, string, string | undefined, string[], string[]]> = [
@@ -392,14 +429,19 @@ export const universityMajors: UniversityMajor[] = Array.from({ length: 36 }, (_
     universityName: university.name,
     departmentName: major.name,
     region: university.region,
-    departmentUrl: createUniversitySearchUrl(university.name, major.name),
+    departmentUrl: createDepartmentOfficialSearchUrl(university.name, major.name),
     admissionUrl: university.admissionUrl,
     curriculumUrl: createUniversitySearchUrl(university.name, `${major.name} 교육과정`),
     isContractMajor: ["semiconductor", "ai"].includes(major.id) && index % 3 === 0,
     contractCompany: major.id === "semiconductor" ? "삼성전자/SK하이닉스 계열 확인 필요" : undefined,
     scholarshipInfo: index % 4 === 0 ? "장학·산학연계 조건은 공식 모집요강 확인 필요" : "공식 홈페이지 확인 필요",
     employmentLinked: ["semiconductor", "electronics"].includes(major.id) && index % 2 === 0,
-    notes: "모집단위명과 전형은 매년 바뀔 수 있으므로 입학처 모집요강을 확인하세요."
+    notes: "탐색용 자동 후보입니다. 실제 설치 학과, 모집단위명, 전형은 대학알리미와 입학처 모집요강으로 확인하세요.",
+    dataSource: "mock candidate generated from major seeds",
+    sourceYear: 2026,
+    verified: false,
+    verificationStatus: "needs_review" as const,
+    warning: "검증 필요: 실제 대학-학과 연결로 단정하지 마세요."
   };
 });
 
@@ -426,7 +468,24 @@ export const comparisonPresets: ComparisonPreset[] = [
   finalComment: "안정적 전문직을 가장 중시하면 메디컬, 수학·물리 기반 기술산업과 성장성을 선호하면 반도체/AI, 연구 중심이면 바이오·공학 경로를 함께 비교하세요."
 }));
 
-export const categories: Category[] = ["메디컬", "반도체", "AI·소프트웨어", "바이오·제약", "미래차·배터리", "경영·경제", "교육", "공공·행정"];
+export const categories: Category[] = [
+  "메디컬",
+  "보건의료",
+  "반도체",
+  "AI·소프트웨어",
+  "바이오·제약",
+  "기계·로봇",
+  "전기·에너지",
+  "화학·소재",
+  "미래차·배터리",
+  "경영·경제",
+  "교육·심리",
+  "법·공공",
+  "디자인·콘텐츠",
+  "환경·농생명",
+  "사회과학·정책",
+  "국제·외교"
+];
 
 export const featuredReports = [
   {

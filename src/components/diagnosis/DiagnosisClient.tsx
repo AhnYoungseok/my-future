@@ -3,8 +3,10 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { jobs, majors } from "@/data/mockData";
+import { careerFitCategories, diagnosisModes, subjectInterpretation } from "@/data/seed/diagnosisQuestions";
+import { buildCareerProfileSummary, buildTenYearScenario, getConfidenceLabel } from "@/lib/diagnosis";
 import { defaultStudentProfile, getCategoryRepresentativeMajors, getTopRecommendedJobs, getTopRecommendedMajors } from "@/lib/scoring";
-import type { StudentProfile } from "@/types/career";
+import type { DiagnosisMode, StudentProfile } from "@/types/career";
 import { savePortfolio } from "@/lib/storage";
 import { ScoreBar } from "@/components/ui/ScoreBar";
 
@@ -75,9 +77,13 @@ const sections = [
 export function DiagnosisClient() {
   const [profile, setProfile] = useState<StudentProfile>(defaultStudentProfile);
   const [step, setStep] = useState(0);
+  const [mode, setMode] = useState<DiagnosisMode>("standard");
   const majorResults = useMemo(() => getTopRecommendedMajors(profile, majors), [profile]);
   const categoryMajorResults = useMemo(() => getCategoryRepresentativeMajors(profile, majors), [profile]);
   const jobResults = useMemo(() => getTopRecommendedJobs(profile, jobs), [profile]);
+  const profileSummary = useMemo(() => buildCareerProfileSummary(profile), [profile]);
+  const tenYearScenario = useMemo(() => buildTenYearScenario(majorResults[0], jobResults[0]), [majorResults, jobResults]);
+  const confidence = useMemo(() => getConfidenceLabel(majorResults), [majorResults]);
 
   function update(group: keyof StudentProfile, key: string, value: number) {
     setProfile((prev) => ({ ...prev, [group]: { ...prev[group], [key]: value } }));
@@ -89,6 +95,20 @@ export function DiagnosisClient() {
   return (
     <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-6 grid gap-3 md:grid-cols-3">
+          {diagnosisModes.map((item) => (
+            <button
+              key={item.id}
+              className={`rounded-md border p-3 text-left transition ${mode === item.id ? "border-slateblue bg-blue-50" : "border-slate-200 bg-white hover:border-slateblue"}`}
+              onClick={() => setMode(item.id)}
+              type="button"
+            >
+              <span className="block text-sm font-black text-navy">{item.name}</span>
+              <span className="mt-1 block text-xs font-semibold text-slate-500">{item.duration} · {item.questionCount}문항 기준</span>
+              <span className="mt-2 block text-xs leading-5 text-slate-600">{item.purpose}</span>
+            </button>
+          ))}
+        </div>
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-2xl font-black text-navy">{section.title}</h2>
           <span className="text-sm font-bold text-slate-500">{step + 1}/5</span>
@@ -113,17 +133,53 @@ export function DiagnosisClient() {
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-2xl font-black text-navy">진단 결과</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">추천은 단정이 아니라 탐색 우선순위입니다. 입시 가능성, 공식 모집요강, 실제 직무 생활을 함께 확인하세요.</p>
+        <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="font-black text-navy">CareerFit 360 종합 프로파일</h3>
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slateblue">{confidence}</span>
+          </div>
+          <p className="mt-2 text-sm font-bold text-slate-700">{profileSummary.headline}</p>
+          <div className="mt-3 grid gap-3 text-xs leading-5 text-slate-600 md:grid-cols-2">
+            <p>강한 과목: {profileSummary.strongSubjects.join(", ")}</p>
+            <p>위험 과목: {profileSummary.riskSubjects.join(", ")}</p>
+            <p>{profileSummary.preferredLifestyle}</p>
+            <p>{profileSummary.avoidEnvironment}</p>
+            <p>{profileSummary.parentMisread}</p>
+            <p>{profileSummary.counselorCheck}</p>
+          </div>
+        </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <ResultList title="전체 계열별 추천 학과" items={categoryMajorResults} hrefPrefix="/majors" />
-          <ResultList title="추천 직업 TOP 5" items={jobResults.slice(0, 5)} hrefPrefix="/jobs" />
+          <ResultList title="추천 직업 TOP 10" items={jobResults.slice(0, 10)} hrefPrefix="/jobs" />
+        </div>
+        <div className="mt-5 rounded-md border border-slate-200 bg-white p-4">
+          <h3 className="font-black text-navy">추천 계열별 주의점과 대안</h3>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {categoryMajorResults.slice(0, 8).map((item) => {
+              const major = majors.find((majorItem) => majorItem.id === item.id);
+              const categoryGuide = careerFitCategories.find((guide) => guide.category === major?.category);
+              return (
+                <div key={item.id} className="rounded-md bg-slate-50 p-3 text-xs leading-5 text-slate-600">
+                  <p className="font-black text-navy">{major?.category || item.name} · {item.fitScore}</p>
+                  <p className="mt-1">{categoryGuide?.caution || item.caution}</p>
+                  <p className="mt-1 font-semibold text-slateblue">대안: {(categoryGuide?.alternatives || []).join(", ") || item.alternatives.join(", ")}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div className="mt-5 rounded-md border border-blue-100 bg-blue-50 p-4">
-          <h3 className="font-black text-navy">개인 점수 기준 TOP 5</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-700">{majorResults.slice(0, 5).map((item) => `${item.name} ${item.fitScore}`).join(" · ")}</p>
+          <h3 className="font-black text-navy">추천 학과 TOP 10</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{majorResults.slice(0, 10).map((item) => `${item.name} ${item.fitScore}`).join(" · ")}</p>
         </div>
         <div className="mt-5 rounded-md bg-slate-50 p-4">
-          <h3 className="font-black text-navy">주의해야 할 학과 TOP 3</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{majorResults.slice(-3).map((item) => item.name).join(", ")}은 현재 입력 기준에서 과목 또는 생활방식 적합도가 낮게 나타납니다.</p>
+          <h3 className="font-black text-navy">주의해야 할 학과 TOP 5</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{majorResults.slice(-5).map((item) => item.name).join(", ")}은 현재 입력 기준에서 과목, 생활방식, 리스크 허용도 중 일부가 낮게 나타납니다.</p>
+          <ul className="mt-3 space-y-1 text-xs leading-5 text-slate-500">{subjectInterpretation.map((item) => <li key={item}>• {item}</li>)}</ul>
+        </div>
+        <div className="mt-5 rounded-md border border-slate-200 bg-white p-4">
+          <h3 className="font-black text-navy">10년 인생 시나리오</h3>
+          <ol className="mt-3 space-y-2 text-sm leading-6 text-slate-600">{tenYearScenario.map((item) => <li key={item}>{item}</li>)}</ol>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <Advice title="학생의 강점" items={["관심 분야와 과목 적성을 함께 비교할 수 있음", "전문성·성장성·안정성을 균형 있게 검토 가능", "대안 학과를 함께 설계할 여지 있음"]} />

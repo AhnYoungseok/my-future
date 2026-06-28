@@ -20,7 +20,19 @@ const representativeMajorIds = [
   "data-science",
   "electronics",
   "biomedical",
-  "chemical"
+  "chemical",
+  "robotics",
+  "energy",
+  "business",
+  "economics",
+  "education",
+  "psychology",
+  "law-public",
+  "media-content",
+  "design",
+  "environment",
+  "food-agri",
+  "international"
 ];
 
 export default function HomePage() {
@@ -60,7 +72,7 @@ export default function HomePage() {
           {homeCards.map(([title, desc, href, tone]) => <CategoryCard key={title} title={title} description={desc} href={href} tone={tone} />)}
         </div>
         <h2 className="mt-12 text-3xl font-black text-navy">전체 전공계열 대표 학과</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-600">메디컬만 먼저 보이지 않도록 반도체, AI·소프트웨어, 바이오·제약, 미래차·배터리까지 대표 학과를 함께 배치했습니다.</p>
+        <p className="mt-2 text-sm leading-6 text-slate-600">메디컬만 먼저 보이지 않도록 공학, AI, 바이오, 경영·경제, 교육·심리, 법·공공, 디자인·콘텐츠, 환경·농생명, 국제계열까지 대표 학과를 함께 배치했습니다.</p>
         <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {representativeMajors.map((major) => <MajorCard key={major.id} major={major} />)}
         </div>

@@ -3,6 +3,8 @@
 const key = "career-compass-pro-portfolio";
 
 export type PortfolioState = {
+  displayName?: string;
+  savedAt?: string;
   majors: string[];
   jobs: string[];
   companies: string[];
@@ -27,6 +29,12 @@ export function loadPortfolio(): PortfolioState {
 export function savePortfolio(state: PortfolioState) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(key, JSON.stringify(state));
+}
+
+export function resetPortfolio() {
+  if (typeof window === "undefined") return emptyPortfolio;
+  window.localStorage.removeItem(key);
+  return emptyPortfolio;
 }
 
 export function toggleSaved(type: keyof Pick<PortfolioState, "majors" | "jobs" | "companies">, id: string) {

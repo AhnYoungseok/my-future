@@ -7,7 +7,7 @@ import { careerFitCategories, diagnosisModes, subjectInterpretation } from "@/da
 import { buildCareerProfileSummary, buildTenYearScenario, getConfidenceLabel } from "@/lib/diagnosis";
 import { defaultStudentProfile, getCategoryRepresentativeMajors, getTopRecommendedJobs, getTopRecommendedMajors } from "@/lib/scoring";
 import type { DiagnosisMode, StudentProfile } from "@/types/career";
-import { savePortfolio } from "@/lib/storage";
+import { loadPortfolio, savePortfolio } from "@/lib/storage";
 import { ScoreBar } from "@/components/ui/ScoreBar";
 import { MetricBarChart, RadarChart } from "@/components/ui/Charts";
 
@@ -79,6 +79,8 @@ export function DiagnosisClient() {
   const [profile, setProfile] = useState<StudentProfile>(defaultStudentProfile);
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<DiagnosisMode>("standard");
+  const [displayName, setDisplayName] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
   const majorResults = useMemo(() => getTopRecommendedMajors(profile, majors), [profile]);
   const categoryMajorResults = useMemo(() => getCategoryRepresentativeMajors(profile, majors), [profile]);
   const jobResults = useMemo(() => getTopRecommendedJobs(profile, jobs), [profile]);
@@ -87,7 +89,29 @@ export function DiagnosisClient() {
   const confidence = useMemo(() => getConfidenceLabel(majorResults), [majorResults]);
 
   function update(group: keyof StudentProfile, key: string, value: number) {
+    setSaveMessage("");
     setProfile((prev) => ({ ...prev, [group]: { ...prev[group], [key]: value } }));
+  }
+
+  function saveDiagnosis() {
+    const current = loadPortfolio();
+    const name = displayName.trim() || "이름 미입력";
+    savePortfolio({
+      ...current,
+      displayName: name,
+      savedAt: new Date().toISOString(),
+      majors: categoryMajorResults.map((item) => item.id),
+      jobs: jobResults.slice(0, 5).map((item) => item.id),
+      diagnosis: { mode, profile }
+    });
+    setSaveMessage(`${name}의 진단 결과를 저장했습니다.`);
+  }
+
+  function resetDiagnosis() {
+    setProfile(defaultStudentProfile);
+    setStep(0);
+    setMode("standard");
+    setSaveMessage("입력값을 처음 상태로 되돌렸습니다.");
   }
 
   const section = sections[step];
@@ -206,19 +230,26 @@ export function DiagnosisClient() {
           <Advice title="학생의 강점" items={["관심 분야와 과목 적성을 함께 비교할 수 있음", "전문성·성장성·안정성을 균형 있게 검토 가능", "대안 학과를 함께 설계할 여지 있음"]} />
           <Advice title="학생의 리스크" items={["높은 입시 난도와 실제 직무 생활을 혼동할 수 있음", "연봉만 보고 생활강도와 가족시간을 놓칠 수 있음", "학과명보다 세부 직무 검증이 필요함"]} />
         </div>
-        <button
-          className="mt-5 rounded-md bg-slateblue px-4 py-2 font-bold text-white"
-          onClick={() => {
-            savePortfolio({
-              majors: categoryMajorResults.map((item) => item.id),
-              jobs: jobResults.slice(0, 5).map((item) => item.id),
-              companies: [],
-              diagnosis: profile
-            });
-          }}
-        >
-          진단 결과를 포트폴리오에 저장
-        </button>
+        <div className="mt-5 rounded-md border border-slate-200 bg-white p-4">
+          <label className="block">
+            <span className="text-sm font-black text-navy">이름 또는 예명</span>
+            <input
+              className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slateblue"
+              placeholder="예: 민준, 별명, 학생 A"
+              value={displayName}
+              onChange={(event) => setDisplayName(event.target.value)}
+            />
+          </label>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button className="rounded-md bg-slateblue px-4 py-2 font-bold text-white" onClick={saveDiagnosis} type="button">
+              진단 결과 저장
+            </button>
+            <button className="rounded-md border border-slate-300 bg-white px-4 py-2 font-bold text-navy" onClick={resetDiagnosis} type="button">
+              진단 초기화
+            </button>
+          </div>
+          {saveMessage ? <p className="mt-3 rounded-md bg-blue-50 p-3 text-sm font-semibold text-blue-950">{saveMessage}</p> : null}
+        </div>
       </section>
     </div>
   );
